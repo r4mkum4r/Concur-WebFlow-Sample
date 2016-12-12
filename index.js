@@ -51,7 +51,8 @@ app.get('/', function (req, res) {
 app.get('/venues', function (req, res) {
 
   var query = req.query.query,
-      near = req.query.near;
+      near = req.query.near,
+      limit = req.query.limit;
 
   if (!query || !near) {
     res.status(404).send();
@@ -118,8 +119,23 @@ app.get('/venues', function (req, res) {
 
       });
 
-
     });
+
+    venues.items.sort(function(item1, item2) {
+      if (item1.visits > item2.visits) {
+        return -1;
+      }
+
+      if (item1.visits < item2.visits) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    if (limit) {
+      venues.items.splice(limit);
+    }
 
     venues.geocode = data.response.geocode;
 
