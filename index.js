@@ -65,8 +65,7 @@ app.get('/venues', function (req, res) {
     foursquare.venues.search({
     intent: 'browse',
     query: query,
-    near: near,
-    limit: 5
+    near: near
   }, function (error, data) {
 
     if (error) {
@@ -101,8 +100,6 @@ app.get('/venues', function (req, res) {
         min = _.min(amounts);
         max = _.max(amounts);
       }
-
-      console.log(min, max);
 
       venues.items.push({
         name: venue.name,
