@@ -5,12 +5,15 @@ var express = require('express'),
     concur = require('concur-platform'),
     foursquare = require('node-foursquare-venues')('QIWD0D1VYJZKBLV4V1LR334C3223DFMT5D1P0NZ3TJY42XYZ', 'U3I34QSDRZKRBLMXLKQZGTYVNRQNEERKN3KEBYVX4SEOCVPO', '20161212', 'foursquare'),
     entries = [],
-    venues = {};
+    venues = {
+      items: []
+    };
 
 app.set('port', (process.env.PORT || 5000));
 
 
 function fetchEntires(onComplete) {
+  entries = [];
   concur.oauth.native(config.concur)
   .then(function(token) {
     concur.entries.get({
@@ -54,9 +57,9 @@ app.get('/venues', function (req, res) {
     res.status(404).send();
   }
 
-  venues = {
+  venues = _.extend({}, {
     items: []
-  };
+  });
 
   fetchEntires( function () {
     foursquare.venues.search({
