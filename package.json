@@ -10,6 +10,7 @@
     "async": "0.9.0",
     "concur-platform": "^0.3.13",
     "express": "^4.9.8",
+    "lodash": "^4.17.2",
     "node-foursquare-venues": "^1.1.0",
     "querystring": "0.2.0"
   },
