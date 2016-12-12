@@ -52,7 +52,7 @@ app.get('/venues', function (req, res, next) {
 
   var query = req.query.query,
       near = req.query.near,
-      limit = req.query.limit,
+      limit = req.query.limit  || 50,
       amount = req.query.amount,
       fsOpts = {
         intent: 'browse'
@@ -146,9 +146,11 @@ app.get('/venues', function (req, res, next) {
       return 0;
     });
 
-    venues.items = venues.items.filter(function (item) {
-      return item.amount.min < amount;
-    });
+    if (amount) {
+      venues.items = venues.items.filter(function (item) {
+        return item.amount.min < amount;
+      });
+    }
 
     if (limit) {
       venues.items.splice(limit);
