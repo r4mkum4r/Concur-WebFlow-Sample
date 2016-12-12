@@ -48,30 +48,42 @@ app.get('/', function (req, res) {
   res.send('Hello world !');
 });
 
-app.get('/venues', function (req, res) {
+app.get('/venues', function (req, res, next) {
 
   var query = req.query.query,
       near = req.query.near,
-      limit = req.query.limit;
+      limit = req.query.limit,
+      fsOpts = {
+        intent: 'browse'
+      };
 
-  if (!query || !near) {
-    res.status(404).send();
+  if (!near) {
+    if (req.query.ll) {
+      fsOpts.ll = req.query.ll;
+      fsOpts.intent = 'checkin';
+    } else {
+      res.status(400).send();
+    }
+  } else {
+    fsOpts.near = near;
   }
+
+  fsOpts.query = query;
 
   venues = _.extend({}, {
     items: []
   });
 
   fetchEntires( function () {
-    foursquare.venues.search({
-    intent: 'browse',
-    query: query,
-    near: near
-  }, function (error, data) {
+    console.log(fsOpts);
+    foursquare.venues.search(fsOpts, function (error, data) {
 
     if (error) {
-      console.log(error);
-      res.status(400).send();
+      res.status(400).send('fail');
+    }
+
+    if (_.isEmpty(data.response)) {
+      return;
     }
 
     data.response.venues.forEach( function (venue) {
@@ -134,6 +146,7 @@ app.get('/venues', function (req, res) {
     });
 
     if (limit) {
+      console.log(limit);
       venues.items.splice(limit);
     }
 
