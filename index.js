@@ -77,18 +77,35 @@ app.get('/venues', function (req, res) {
     data.response.venues.forEach( function (venue) {
 
       var visits = 0,
-          amount = 0;
+          amounts = [],
+          avg = 0,
+          min = 0,
+          max = 0,
+          total = 0;
 
       for (var i = 0; i < entries.length; i++) {
 
         if( entries[i].postal.Value == venue.location.postalCode ) {
           visits += 1;
-          amount += entries[i].amount
+          total += entries[i].amount;
+          amounts.push(entries[i].amount);
         }
 
       };
 
+      if (total) {
+        avg = total / visits;
+      }
+
+      if (!_.isEmpty(amounts) ) {
+        min = _.min(amounts);
+        max = _.max(amounts);
+      }
+
+      console.log(min, max);
+
       venues.items.push({
+        name: venue.name,
         address: venue.location.formattedAddress,
         postal: venue.location.postalCode,
         location: {
@@ -96,7 +113,12 @@ app.get('/venues', function (req, res) {
           lng: venue.location.lng
         },
         visits: visits,
-        amount: amount
+        amount: {
+          avg: avg,
+          min: min,
+          max: max
+        }
+
       });
 
 
@@ -114,7 +136,10 @@ app.get('/venues', function (req, res) {
 });
 
 app.get('/entries', function (req, res) {
-  res.json(entries);
+  fetchEntires(function() {
+    res.json(entries);
+  })
+
 });
 
 app.listen(app.get('port'), function() {
