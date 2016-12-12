@@ -76,19 +76,26 @@ app.get('/venues', function (req, res) {
 
     data.response.venues.forEach( function (venue) {
 
+      var visits = 0;
+
       for (var i = 0; i < entries.length; i++) {
-        console.log( entries[i].postal.Value, venue.location.postalCode);
+
         if( entries[i].postal.Value == venue.location.postalCode ) {
-          venues.items.push({
-            address: venue.location.formattedAddress,
-            postal: venue.location.postalCode,
-            location: {
-              lat: venue.location.lat,
-              lng: venue.location.lng
-            }
-          });
+          visits += 1;
         }
+
       };
+
+      venues.items.push({
+        address: venue.location.formattedAddress,
+        postal: venue.location.postalCode,
+        location: {
+          lat: venue.location.lat,
+          lng: venue.location.lng
+        },
+        visits: visits
+      });
+
 
     });
 
